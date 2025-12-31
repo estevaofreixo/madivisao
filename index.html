@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cálculo da Má Divisão</title>
+</head>
+<body>
+  <h1>Cálculo da Má Divisão</h1>
+  
+  <form id="divForm">
+    <label for="D">Dividendo (D):</label>
+    <input type="number" id="D" required><br><br>
+
+    <label for="d">Divisor (d):</label>
+    <input type="number" id="d" required><br><br>
+
+    <button type="submit">Calcular</button>
+  </form>
+
+  <div id="resultado" style="margin-top:20px;"></div>
+
+  <script>
+    document.getElementById("divForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      let D = parseInt(document.getElementById("D").value);
+      let d = parseInt(document.getElementById("d").value);
+
+      let output = "";
+
+      if (d === 0) {
+        output = "<p>Erro: divisor não pode ser zero</p>";
+      } else {
+        // Múltiplo mais próximo
+        let multiple = Math.round(D / d);
+        let M = multiple * d;
+
+        let r1 = Math.floor(M / d);
+        let r2 = Math.abs(M - D);
+        let r3 = d - r2;
+
+        let r1_mod, sinal;
+        if (D > M) {
+          r1_mod = r1 + 1;
+          sinal = "+";
+        } else {
+          r1_mod = r1 - 1;
+          sinal = "-";
+        }
+
+        let resultadoFinal = (r3 * r1) + (r2 * r1_mod);
+
+        output = `
+          <h2>Resultado da má divisão de ${D} / ${d}:</h2>
+          <p>Múltiplo mais próximo (M) = ${M}</p>
+          <p>r1 (M / d) = ${r1}</p>
+          <p>r2 (M - D) = ${r2}</p>
+          <p>r3 (d - r2) = ${r3}</p>
+          <h2>Resultado final:</h2>
+          <p>(r3 x r1) + (r2 x (r1 ${sinal} 1))</p>          
+          <p>(${r3} x ${r1}) + (${r2} x ${r1_mod}) = ${resultadoFinal}</p>
+        `;
+      }
+
+      document.getElementById("resultado").innerHTML = output;
+    });
+  </script>
+</body>
+</html>
