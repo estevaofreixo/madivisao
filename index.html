@@ -9,10 +9,10 @@
   
   <form id="divForm">
     <label for="D">Dividendo (D):</label>
-    <input type="number" id="D" required><br><br>
+    <input type="text" id="D" inputmode="numeric" required><br><br>
 
     <label for="d">Divisor (d):</label>
-    <input type="number" id="d" required><br><br>
+    <input type="text" id="d" inputmode="numeric" required><br><br>
 
     <button type="submit">Calcular</button>
   </form>
@@ -20,11 +20,43 @@
   <div id="resultado" style="margin-top:20px;"></div>
 
   <script>
+    // --- Funções de formatação e limpeza ---
+    function onlyDigits(value) {
+      return value.replace(/\D/g, "");
+    }
+
+    function formatThousands(value) {
+      if (value === "") return "";
+      return parseInt(value, 10).toLocaleString("pt-BR", {
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 0
+      });
+    }
+
+    function fmt(n) {
+      return n.toLocaleString("pt-BR", {
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 0
+      });
+    }
+
+    // --- Formatação automática dos inputs ---
+    ["D", "d"].forEach(id => {
+      const input = document.getElementById(id);
+
+      input.addEventListener("input", function () {
+        let raw = onlyDigits(this.value);
+        this.value = formatThousands(raw);
+      });
+    });
+
+    // --- Lógica principal ---
     document.getElementById("divForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
-      let D = parseInt(document.getElementById("D").value);
-      let d = parseInt(document.getElementById("d").value);
+      // Remove os pontos antes do cálculo
+      let D = parseInt(document.getElementById("D").value.replace(/\./g, ""), 10);
+      let d = parseInt(document.getElementById("d").value.replace(/\./g, ""), 10);
 
       let output = "";
 
@@ -36,7 +68,17 @@
         let M = multiple * d;
 
         let r1 = Math.floor(M / d);
-        let r2 = Math.abs(M - D);
+
+        // r2 com expressão orientada
+        let r2, expr_r2;
+        if (M >= D) {
+          r2 = M - D;
+          expr_r2 = "M − D";
+        } else {
+          r2 = D - M;
+          expr_r2 = "D − M";
+        }
+
         let r3 = d - r2;
 
         let r1_mod, sinal;
@@ -51,14 +93,14 @@
         let resultadoFinal = (r3 * r1) + (r2 * r1_mod);
 
         output = `
-          <h2>Resultado da má divisão de ${D} / ${d}:</h2>
-          <p>Múltiplo mais próximo (M) = ${M}</p>
-          <p>r1 (M / d) = ${r1}</p>
-          <p>r2 (M - D) = ${r2}</p>
-          <p>r3 (d - r2) = ${r3}</p>
+          <h2>Resultado da má divisão de ${fmt(D)} / ${fmt(d)}:</h2>
+          <p>Múltiplo mais próximo (M) = ${fmt(M)}</p>
+          <p>r1 (M / d) = ${fmt(r1)}</p>
+          <p>r2 = ${expr_r2} = ${fmt(r2)}</p>
+          <p>r3 (d − r2) = ${fmt(r3)}</p>
           <h2>Resultado final:</h2>
-          <p>(r3 x r1) + (r2 x (r1 ${sinal} 1))</p>          
-          <p>(${r3} x ${r1}) + (${r2} x ${r1_mod}) = ${resultadoFinal}</p>
+          <p>(r3 × r1) + (r2 × (r1 ${sinal} 1))</p>          
+          <p>(${fmt(r3)} × ${fmt(r1)}) + (${fmt(r2)} × ${fmt(r1_mod)}) = <strong>${fmt(resultadoFinal)}</strong></p>
         `;
       }
 
@@ -67,3 +109,5 @@
   </script>
 </body>
 </html>
+
+
