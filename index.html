@@ -222,9 +222,9 @@
         output = `
           <h2>Má divisão de ${fmt(D)} / ${fmt(d)}</h2>
           <p>Múltiplo mais próximo (M): ${fmt(M)}</p>
-          <p>r1 = M / d = ${fmt(r1)}</p>
-          <p>r2 = ${expr_r2} = ${fmt(r2)}</p>
-          <p>r3 = d − r2 = ${fmt(r3)}</p>          
+          <p>[r1] M / d = ${fmt(r1)}</p>
+          <p>[r2] ${expr_r2} = ${fmt(r2)}</p>
+          <p>[r3] d − r2 = ${fmt(r3)}</p>          
           <p><strong>Resultado final</strong></p>          
           <p>(r3 × r1) + (r2 × (r1 ${sinal} 1))</p>  
           <p>(${fmt(r3)} × ${fmt(r1)}) + (${fmt(r2)} × ${fmt(r1_mod)})</p>
@@ -237,5 +237,6 @@
   </script>
 </body>
 </html>
+
 
 
