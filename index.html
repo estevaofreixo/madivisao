@@ -3,24 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <title>Cálculo da Má Divisão</title>
+
+<style>
+  :root {
+    --bg: #e2e8f0;            
+    --card: #1e2d2d;          
+    --primary: #f39c12;       
+    --secondary: #e67e22;     
+    --text: #fdfaf5;          
+    --muted: #a5adad;         
+    --danger: #ff6b6b;        
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0); 
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(30, 45, 45, 0.3); 
+  }
+
+  h1 {
+    margin-top: 0;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+  }
+
+  form {
+    margin-top: 24px;
+    display: grid;
+    gap: 16px;
+  }
+
+  label {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 1px solid #141f1f;
+    background-color: #e2e2d9; /* Escurecido para um tom de areia suave */
+    color: #1a1c1e;            
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus {
+    background-color: #eeebe3; /* Clareia levemente no foco para dar feedback */
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+  }
+
+  button {
+    margin-top: 8px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1c1e;            
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(243, 156, 18, 0.4);
+  }
+
+  button:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  #resultado {
+    margin-top: 28px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.25); 
+    border-radius: 12px;
+    border: 1px solid rgba(243, 156, 18, 0.3);
+  }
+
+  #resultado h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--primary);
+  }
+
+  #resultado p {
+    margin: 6px 0;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  #resultado strong {
+    color: var(--primary);
+    font-size: 1.05rem;
+  }
+
+  .erro {
+    color: var(--danger);
+    font-weight: 600;
+    text-align: center;
+  }
+</style>
 </head>
+
 <body>
-  <h1>Cálculo da Má Divisão</h1>
-  
-  <form id="divForm">
-    <label for="D">Dividendo (D):</label>
-    <input type="text" id="D" inputmode="numeric" required><br><br>
+  <div class="container">
+    <h1>Cálculo da Má Divisão</h1>
 
-    <label for="d">Divisor (d):</label>
-    <input type="text" id="d" inputmode="numeric" required><br><br>
+    <form id="divForm">
+      <div>
+        <label for="D">Dividendo (D)</label>
+        <input type="text" id="D" inputmode="numeric" required>
+      </div>
 
-    <button type="submit">Calcular</button>
-  </form>
+      <div>
+        <label for="d">Divisor (d)</label>
+        <input type="text" id="d" inputmode="numeric" required>
+      </div>
 
-  <div id="resultado" style="margin-top:20px;"></div>
+      <button type="submit">Calcular</button>
+    </form>
+
+    <div id="resultado"></div>
+  </div>
 
   <script>
-    // --- Funções de formatação e limpeza ---
     function onlyDigits(value) {
       return value.replace(/\D/g, "");
     }
@@ -40,36 +173,30 @@
       });
     }
 
-    // --- Formatação automática dos inputs ---
     ["D", "d"].forEach(id => {
       const input = document.getElementById(id);
-
       input.addEventListener("input", function () {
         let raw = onlyDigits(this.value);
         this.value = formatThousands(raw);
       });
     });
 
-    // --- Lógica principal ---
     document.getElementById("divForm").addEventListener("submit", function(event) {
       event.preventDefault();
 
-      // Remove os pontos antes do cálculo
       let D = parseInt(document.getElementById("D").value.replace(/\./g, ""), 10);
       let d = parseInt(document.getElementById("d").value.replace(/\./g, ""), 10);
 
       let output = "";
 
       if (d === 0) {
-        output = "<p>Erro: divisor não pode ser zero</p>";
+        output = `<p class="erro">Erro: divisor não pode ser zero</p>`;
       } else {
-        // Múltiplo mais próximo
         let multiple = Math.round(D / d);
         let M = multiple * d;
 
         let r1 = Math.floor(M / d);
 
-        // r2 com expressão orientada
         let r2, expr_r2;
         if (M >= D) {
           r2 = M - D;
@@ -93,14 +220,15 @@
         let resultadoFinal = (r3 * r1) + (r2 * r1_mod);
 
         output = `
-          <h2>Resultado da má divisão de ${fmt(D)} / ${fmt(d)}:</h2>
-          <p>Múltiplo mais próximo (M) = ${fmt(M)}</p>
-          <p>r1 (M / d) = ${fmt(r1)}</p>
+          <h2>Má divisão de ${fmt(D)} / ${fmt(d)}</h2>
+          <p>Múltiplo mais próximo (M): ${fmt(M)}</p>
+          <p>r1 = M / d = ${fmt(r1)}</p>
           <p>r2 = ${expr_r2} = ${fmt(r2)}</p>
-          <p>r3 (d − r2) = ${fmt(r3)}</p>
-          <h2>Resultado final:</h2>
-          <p>(r3 × r1) + (r2 × (r1 ${sinal} 1))</p>          
-          <p>(${fmt(r3)} × ${fmt(r1)}) + (${fmt(r2)} × ${fmt(r1_mod)}) = <strong>${fmt(resultadoFinal)}</strong></p>
+          <p>r3 = d − r2 = ${fmt(r3)}</p>          
+          <p><strong>Resultado final</strong></p>          
+          <p>(r3 × r1) + (r2 × (r1 ${sinal} 1))</p>  
+          <p>(${fmt(r3)} × ${fmt(r1)}) + (${fmt(r2)} × ${fmt(r1_mod)})</p>
+          <p><strong>${fmt(resultadoFinal)}</strong></p>
         `;
       }
 
